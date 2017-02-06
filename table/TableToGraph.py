@@ -33,4 +33,5 @@ def ttg(table):
 
 if __name__ == "__main__":
     t = Table("test.tsv")
-    print(ttg(t))
+    g = ttg(t)
+    print(g['Year'])

@@ -8,3 +8,6 @@ class Node():
 
     def __str__(self):
         return "NODE['" + str(self.name) + "']"
+
+    def __getitem__(self, item):
+        return self.edges[item]
