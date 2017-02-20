@@ -21,7 +21,7 @@ class Unary():
     def __str__(self):
         return "[UNARY: " + str(self.name) + "]"
 
-    def  compile(self):
+    def compile(self):
         return lambda x: self.contains(x) or x in self.values
 
 
@@ -65,6 +65,11 @@ class Record():
     def __hash__(self):
         return self.value.__hash__()
 
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return False
+
 
 class Pair():
     def __init__(self,k,v):
@@ -102,6 +107,14 @@ class Property():
     def __str__(self):
         return "[PROPERTY: "+str(self.name)+"]"
 
+    def __hash__(self):
+        return "$PROPR$".__hash__() + self.name.__hash__()
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.name == self.name
+        return False
+
 
 class Reverse():
     def __init__(self, b):
@@ -122,6 +135,14 @@ class Reverse():
     def compile(self):
         c = self.b.compile()
         return lambda x, y: c(y, x)
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.b == self.b
+        return False
+
+    def __hash__(self):
+        return -self.b.__hash__()
 
 
 class Join():
@@ -187,7 +208,6 @@ class Intersection():
     def vals(self):
         avals = self.u1.vals()
         bvals = self.u2.vals()
-
 
         c = self.compile()
         ret = set()
@@ -267,8 +287,7 @@ class Min():
         self.u = u
 
     def compile(self):
-        return lambda: self.vals()
-
+        return lambda x: x in self.vals()
 
     def __str__(self):
         return "[MIN: " + str(self.u) + "]"
@@ -276,12 +295,12 @@ class Min():
     def vals(self):
         current_max = float("inf")
         for v in self.u.vals():
-            if isinstance(v,str):
+            if isinstance(v.value,str):
                 return None
             if v.value < current_max:
                 current_max = v.value
 
-        return Atom(current_max)
+        return {Atom(current_max)}
 
 
 class Max():
@@ -292,17 +311,17 @@ class Max():
         return "[MAX: " + str(self.u) + "]"
 
     def compile(self):
-        return lambda: self.vals()
+        return lambda x: x in self.vals()
 
     def vals(self):
         current_max = float("-inf")
         for v in self.u.vals():
-            if isinstance(v,str):
+            if isinstance(v.value,str):
                 return None
             if v.value > current_max:
                 current_max = v.value
 
-        return Atom(current_max)
+        return {Atom(current_max)}
 
 class Count():
     def __init__(self,u):
@@ -312,10 +331,10 @@ class Count():
         return "[COUNT: " + str(self.u) + "]"
 
     def vals(self):
-        return [Atom(len(self.u.vals()))]
+        return {Atom(len(self.u.vals()))}
 
     def compile(self):
-        return lambda: Atom(len(self.u.vals()))
+        return lambda x: x in self.vals()
 
 class Sum():
         def __init__(self, u):
@@ -374,7 +393,7 @@ class ArgMax():
                     current_max = bv.v.value
                     best_v = uv
         if best_v is not None:
-            return [best_v]
+            return {best_v}
         return None
 
 
@@ -405,7 +424,7 @@ class ArgMin():
                     current_min = bv.v.value
                     best_v = uv
         if best_v is not None:
-            return [best_v]
+            return {best_v}
         return None
 
 
