@@ -350,9 +350,8 @@ class ArgMax():
         return [best_v]
 
 
-
 class ArgMin():
-    def __init__(self,u,b):
+    def __init__(self, u, b):
         self.u = u
         self.b = b
 
@@ -360,17 +359,19 @@ class ArgMin():
         return "[ARGMIN: " + str(self.u) + " " + str(self.b) + "]"
 
     def compile(self):
-        bc = self.b.compile()
+        return lambda x: x in self.vals()
 
-        current_max = float("inf")
+    def vals(self):
+        bc = self.b.compile()
+        current_min = float("inf")
         best_v = None
         for uv in self.u.vals():
             for bv in self.b.vals():
-                m = bc(uv,bv.v)
-                if m and bv.v.value < current_max:
-                    current_max = bv.v.value
+                m = bc(uv, bv.v)
+                if m and bv.v.value < current_min:
+                    current_min = bv.v.value
                     best_v = uv
-        return lambda: best_v
+        return [best_v]
 
 
 
