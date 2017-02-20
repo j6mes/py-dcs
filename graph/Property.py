@@ -1,5 +1,5 @@
 from graph.Node import Node
 
 
-class Property(Node):
+class GProperty(Node):
     pass
