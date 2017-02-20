@@ -54,13 +54,14 @@ class Record():
         return {self}
 
     def compile(self):
-        return lambda x: x==self or x==self.value
+        return lambda x: x == self or x == self.value
 
     def __str__(self):
         return "[RECORD:" + self.value + "]"
 
     def __hash__(self):
         return self.value.__hash__()
+
 
 class Pair():
     def __init__(self,k,v):
