@@ -1,5 +1,6 @@
 entities = set()
 
+
 class Unary():
     def __init__(self,name):
         self.name = name
@@ -20,7 +21,31 @@ class Unary():
     def  compile(self):
         return lambda x: self.contains(x) or x in self.values
 
+
 class Entity():
+    def __init__(self, value):
+        self.value = value
+        entities.add(self)
+
+    def vals(self):
+        return {self}
+
+    def compile(self):
+        return lambda x: x == self or x == self.value
+
+    def __str__(self):
+        return "[ENTITY:" + self.value + "]"
+
+    def __hash__(self):
+        return self.value.__hash__()
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return False
+
+
+class Record():
     def __init__(self, value):
         self.value = value
         entities.add(self)
@@ -32,15 +57,26 @@ class Entity():
         return lambda x: x==self or x==self.value
 
     def __str__(self):
-        return "[ENTITY:" + self.value + "]"
+        return "[RECORD:" + self.value + "]"
+
+    def __hash__(self):
+        return self.value.__hash__()
 
 class Pair():
     def __init__(self,k,v):
         self.k = k
         self.v = v
 
+    def __hash__(self):
+        return self.k.__hash__() + "$$$".__hash__() + self.v.__hash__()
+
     def __str__(self):
         return "[PAIR: " + str(self.k) + " -> " + str(self.v) + "]"
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return self.k == other.k and self.v == other.v
+        return False
 
 class Property():
     def __init__(self,name):
@@ -54,13 +90,15 @@ class Property():
         return self.pairs
 
     def p(self,x,y):
-        for pair in self.pairs:
-            if pair.k == x and pair.v == y:
-                return True
-        return False
+        return Pair(x,y) in self.pairs
 
     def compile(self):
         return lambda x,y: self.p(x,y)
+
+    def __str__(self):
+        return "[PROPERTY: "+str(self.name)+"]"
+
+
 
 class Reverse():
     def __init__(self,b):
@@ -189,8 +227,9 @@ class Negate():
                 ret.add(v)
         return ret
 
+
 class Atom():
-    def __init__(self,v):
+    def __init__(self, v):
         if isinstance(v,Atom):
             v = v.value
         self.value = v
@@ -199,10 +238,20 @@ class Atom():
         return {self}
 
     def compile(self):
-        return lambda x: x==self.value or x==self
+        return lambda x: x == self or x == self.value
 
     def __str__(self):
-        return "[ATOM: " + str(self.value) + "]"
+        return "[ATOM:" + str(self.value) + "]"
+
+    def __hash__(self):
+        return self.value.__hash__()
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return False
+
+
 
 class Min():
     def __init__(self,u):
@@ -321,81 +370,81 @@ class ArgMin():
 
 
 
+if __name__ == "__main__":
+    seattle = Entity("Seattle")
+    nyc = Entity("New York")
 
-seattle = Entity("Seattle")
-nyc = Entity("New York")
+    john = Entity("John")
+    mary = Entity("Mary")
+    bob = Entity("Bob")
+    sue = Entity("Sue")
 
-john = Entity("John")
-mary = Entity("Mary")
-bob = Entity("Bob")
-sue = Entity("Sue")
+    population = Property("Population")
+    population.add(seattle, Atom(50000))
+    population.add(nyc,     Atom(100000))
 
-population = Property("Population")
-population.add(seattle, Atom(50000))
-population.add(nyc,     Atom(100000))
+    cities = Union(nyc,seattle)
 
-cities = Union(nyc,seattle)
+    pob = Property("PlaceOfBirth")
+    pob.add(john,seattle)
+    pob.add(mary,nyc)
+    pob.add(bob,nyc)
+    pob.add(sue,seattle)
 
-pob = Property("PlaceOfBirth")
-pob.add(john,seattle)
-pob.add(mary,nyc)
-pob.add(bob,nyc)
-pob.add(sue,seattle)
+    childrenOf = Property("ChildOf")
+    childrenOf.add(mary,john)
+    childrenOf.add(john,bob)
 
-childrenOf = Property("ChildOf")
-childrenOf.add(mary,john)
-childrenOf.add(john,bob)
+    prof = Property("Profession")
+    doctor = Entity("Doctor")
+    scientist = Entity("Scientist")
 
-prof = Property("Profession")
-doctor = Entity("Doctor")
-scientist = Entity("Scientist")
+    prof.add(john,doctor)
+    prof.add(mary,doctor)
+    prof.add(bob,scientist)
+    prof.add(sue,scientist)
 
-prof.add(john,doctor)
-prof.add(mary,doctor)
-prof.add(bob,scientist)
-prof.add(sue,scientist)
+    #is seattle seattle?
+    print(seattle.compile()("Seattle"))
+    print(seattle.compile()(seattle))
 
-#is seattle seattle?
-print(seattle.compile()("Seattle"))
-print(seattle.compile()(seattle))
+    #was john born in seattle?
+    print(pob.compile()(john,seattle))
 
-#was john born in seattle?
-print(pob.compile()(john,seattle))
+    #was john born in nyc
+    print(pob.compile()(john,nyc))
 
-#was john born in nyc
-print(pob.compile()(john,nyc))
+    #list people born in seattle
+    print([str(v) for v in Join(pob,seattle).vals()])
 
-#list people born in seattle
-print([str(v) for v in Join(pob,seattle).vals()])
+    #Is mary a parent of someone born in seattle?
+    print(Chain(childrenOf,pob).compile()(mary,seattle))
 
-#Is mary a parent of someone born in seattle?
-print(Chain(childrenOf,pob).compile()(mary,seattle))
+    #List of parents who had children born in seattle
+    print([str(v) for v in Join(Chain(childrenOf,pob),seattle).vals()])
+    print([str(v) for v in Join(Chain(childrenOf,pob),nyc).vals()])
 
-#List of parents who had children born in seattle
-print([str(v) for v in Join(Chain(childrenOf,pob),seattle).vals()])
-print([str(v) for v in Join(Chain(childrenOf,pob),nyc).vals()])
+    #Is John a Doctor and born in Seattle?
+    print(Intersection(Join(prof,doctor),Join(pob,seattle)).compile()(john))
 
-#Is John a Doctor and born in Seattle?
-print(Intersection(Join(prof,doctor),Join(pob,seattle)).compile()(john))
+    #print who is both a doctor and born in seattle
+    print([str(v) for v in Intersection(Join(prof,doctor),Join(pob,seattle)).vals()])
 
-#print who is both a doctor and born in seattle
-print([str(v) for v in Intersection(Join(prof,doctor),Join(pob,seattle)).vals()])
+    #print who is either a doctor or born in seattle
+    print([str(v) for v in Union(Join(prof,doctor),Join(pob,seattle)).vals()])
 
-#print who is either a doctor or born in seattle
-print([str(v) for v in Union(Join(prof,doctor),Join(pob,seattle)).vals()])
+    #print who is both not a  doctor and born in seattle
+    print([str(v) for v in Intersection(Join(prof,doctor),Negate(Join(pob,seattle))).vals()]) #mary
+    print([str(v) for v in Intersection(Negate(Join(prof,doctor)),Join(pob,seattle)).vals()]) #sue
 
-#print who is both not a  doctor and born in seattle
-print([str(v) for v in Intersection(Join(prof,doctor),Negate(Join(pob,seattle))).vals()]) #mary
-print([str(v) for v in Intersection(Negate(Join(prof,doctor)),Join(pob,seattle)).vals()]) #sue
+    print(Max(Union(Atom(10),Atom(20))).compile()())
+    print(Min(Union(Atom(10),Atom(20))).compile()())
 
-print(Max(Union(Atom(10),Atom(20))).compile()())
-print(Min(Union(Atom(10),Atom(20))).compile()())
+    print(Count(Intersection(Negate(Join(prof,doctor)),Negate(Join(pob,seattle)))).compile()()) #5
 
-print(Count(Intersection(Negate(Join(prof,doctor)),Negate(Join(pob,seattle)))).compile()()) #5
-
-print(ArgMax(cities,population).compile()())
-print(ArgMin(cities,population).compile()())
+    print(ArgMax(cities,population).compile()())
+    print(ArgMin(cities,population).compile()())
 
 
-print(Avg(Union(Atom(10),Atom(20))).compile()())
-print(Sum(Union(Atom(10),Atom(20))).compile()())
+    print(Avg(Union(Atom(10),Atom(20))).compile()())
+    print(Sum(Union(Atom(10),Atom(20))).compile()())
