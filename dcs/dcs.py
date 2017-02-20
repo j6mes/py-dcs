@@ -18,6 +18,9 @@ class Unary():
     def vals(self):
         return self.values
 
+    def __str__(self):
+        return "[UNARY: " + str(self.name) + "]"
+
     def  compile(self):
         return lambda x: self.contains(x) or x in self.values
 
@@ -142,6 +145,8 @@ class Join():
                 ret.add(x.k)
         return ret
 
+    def __str__(self):
+        return("[JOIN: " + str(self.b) + " x " +str(self.u) + "]")
 
 
 class Chain():
@@ -262,16 +267,22 @@ class Min():
         self.u = u
 
     def compile(self):
-        current_max = float("inf")
-        for v in self.u.vals():
-            if v.value < current_max:
-                current_max = v.value
-
-        return lambda: Atom(current_max)
+        return lambda: self.vals()
 
 
     def __str__(self):
         return "[MIN: " + str(self.u) + "]"
+
+    def vals(self):
+        current_max = float("inf")
+        for v in self.u.vals():
+            if isinstance(v,str):
+                return None
+            if v.value < current_max:
+                current_max = v.value
+
+        return Atom(current_max)
+
 
 class Max():
     def __init__(self,u):
@@ -281,12 +292,17 @@ class Max():
         return "[MAX: " + str(self.u) + "]"
 
     def compile(self):
+        return lambda: self.vals()
+
+    def vals(self):
         current_max = float("-inf")
         for v in self.u.vals():
+            if isinstance(v,str):
+                return None
             if v.value > current_max:
                 current_max = v.value
 
-        return lambda: Atom(current_max)
+        return Atom(current_max)
 
 class Count():
     def __init__(self,u):
@@ -294,6 +310,9 @@ class Count():
 
     def __str__(self):
         return "[COUNT: " + str(self.u) + "]"
+
+    def vals(self):
+        return [Atom(len(self.u.vals()))]
 
     def compile(self):
         return lambda: Atom(len(self.u.vals()))
@@ -347,10 +366,17 @@ class ArgMax():
         for uv in self.u.vals():
             for bv in self.b.vals():
                 m = bc(uv, bv.v)
+
+                if isinstance(bv.v.value, str):
+                    return None
+
                 if m and bv.v.value > current_max:
                     current_max = bv.v.value
                     best_v = uv
-        return [best_v]
+        if best_v is not None:
+            return [best_v]
+        return None
+
 
 
 class ArgMin():
@@ -371,10 +397,16 @@ class ArgMin():
         for uv in self.u.vals():
             for bv in self.b.vals():
                 m = bc(uv, bv.v)
+
+                if isinstance(bv.v.value, str):
+                    return None
+
                 if m and bv.v.value < current_min:
                     current_min = bv.v.value
                     best_v = uv
-        return [best_v]
+        if best_v is not None:
+            return [best_v]
+        return None
 
 
 
