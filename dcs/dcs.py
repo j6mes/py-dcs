@@ -100,29 +100,29 @@ class Property():
         return "[PROPERTY: "+str(self.name)+"]"
 
 
-
 class Reverse():
-    def __init__(self,b):
+    def __init__(self, b):
         self.b = b
 
     def __str__(self):
-        return "R["+str(self.b)+"]"
+        return "R[" + str(self.b) + "]"
 
     def vals(self):
         ret = set()
         c = self.b.compile()
+
         for p in self.b.vals():
-            if c(p.v,p.k):
-                ret.add(Pair(p.v,p.k))
+            ret.add(Pair(p.v, p.k))
 
         return ret
 
     def compile(self):
         c = self.b.compile()
-        return lambda x,y: c(y,x)
+        return lambda x, y: c(y, x)
+
 
 class Join():
-    def __init__(self,b,u):
+    def __init__(self, b, u):
         self.b = b
         self.u = u
 
@@ -130,16 +130,19 @@ class Join():
         bc = self.b.compile()
         uc = self.u.compile()
         ys = self.u.vals()
-        return lambda x: True in [bc(x,y) and uc(y) for y in ys]
+
+        return lambda x: True in [uc(y) and bc(x, y) for y in ys]
 
     def vals(self):
         c = self.compile()
         ret = set()
+
         for x in self.b.vals():
             if c(x.k):
                 ret.add(x.k)
-
         return ret
+
+
 
 class Chain():
     def __init__(self,a,b):
