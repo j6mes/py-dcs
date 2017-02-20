@@ -6,6 +6,8 @@ print("Loading spacy")
 nlp = spacy.load("en")
 print("Done")
 
+atomic_types = ["DATE","TIME","PERCENT","MONEY","QUANTITY","ORDINAL","CARDINAL"]
+entity_types = ["PERSON","NORP","FACILITY","ORG","GPE","LOC","PRODUCT","EVENT","LANGUAGE"]
 
 class TrainingExample():
     def __init__(self, sentence, answer, table):
