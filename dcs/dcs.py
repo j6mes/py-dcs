@@ -24,6 +24,14 @@ class Unary():
     def compile(self):
         return lambda x: self.contains(x) or x in self.values
 
+    def __hash__(self):
+        return "$UNARY$".__hash__() + self.name.__hash__()
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.name == self.name
+        return False
+
 
 class Entity():
     def __init__(self, value):
