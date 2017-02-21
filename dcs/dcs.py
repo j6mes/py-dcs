@@ -202,6 +202,10 @@ class Chain():
                     ret.add(Pair(a.k,b.v))
         return ret
 
+    def __str__(self):
+        return "[CHAIN: "+str(self.a) +" x "+str(self.b)+"]"
+
+
 class Intersection():
     def __init__(self,u1,u2):
         self.u1 = u1
