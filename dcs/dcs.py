@@ -527,14 +527,14 @@ if __name__ == "__main__":
     print([str(v) for v in Intersection(Join(prof,doctor),Negate(Join(pob,seattle))).vals()]) #mary
     print([str(v) for v in Intersection(Negate(Join(prof,doctor)),Join(pob,seattle)).vals()]) #sue
 
-    print(Max(Union(Atom(10),Atom(20))).compile()())
-    print(Min(Union(Atom(10),Atom(20))).compile()())
+    print(Max(Union(Atom(10),Atom(20))).vals())
+    print(Min(Union(Atom(10),Atom(20))).vals())
 
-    print(Count(Intersection(Negate(Join(prof,doctor)),Negate(Join(pob,seattle)))).compile()()) #5
+    print(Count(Intersection(Negate(Join(prof,doctor)),Negate(Join(pob,seattle)))).vals()) #5
 
     print([str(a) for a in ArgMax(cities,population).vals()])
     print([str(a) for a in ArgMin(cities,population).vals()])
 
 
-    print(Avg(Union(Atom(10),Atom(20))).compile()())
-    print(Sum(Union(Atom(10),Atom(20))).compile()())
+    print(Avg(Union(Atom(10),Atom(20))).vals())
+    print(Sum(Union(Atom(10),Atom(20))).vals())
