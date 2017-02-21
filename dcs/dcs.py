@@ -404,7 +404,7 @@ class ArgMax():
     def vals(self):
         bc = self.b.compile()
         current_max = float("-inf")
-        best_v = None
+        best_v = set()
         for uv in self.u.vals():
             for bv in self.b.vals():
                 m = bc(uv, bv.v)
@@ -414,9 +414,12 @@ class ArgMax():
 
                 if m and bv.v.value > current_max:
                     current_max = bv.v.value
-                    best_v = uv
+                    best_v = {uv}
+                elif m and bv.v.value == current_max:
+                    best_v.add(uv)
+
         if best_v is not None:
-            return {best_v}
+            return best_v
         return None
 
 
@@ -435,7 +438,8 @@ class ArgMin():
     def vals(self):
         bc = self.b.compile()
         current_min = float("inf")
-        best_v = None
+
+        best_v = set()
         for uv in self.u.vals():
             for bv in self.b.vals():
                 m = bc(uv, bv.v)
@@ -444,10 +448,14 @@ class ArgMin():
                     return None
 
                 if m and bv.v.value < current_min:
-                    current_min = bv.v.value
-                    best_v = uv
+                    current_max = bv.v.value
+                    best_v = {uv}
+                elif m and bv.v.value == current_min:
+                    best_v.add(uv)
+
         if best_v is not None:
-            return {best_v}
+            return best_v
+
         return None
 
 
