@@ -448,7 +448,7 @@ class ArgMin():
                     return None
 
                 if m and bv.v.value < current_min:
-                    current_max = bv.v.value
+                    current_min = bv.v.value
                     best_v = {uv}
                 elif m and bv.v.value == current_min:
                     best_v.add(uv)
