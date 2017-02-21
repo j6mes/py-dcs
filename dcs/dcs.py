@@ -344,11 +344,17 @@ class Sum():
             return "[SUM: " + str(self.u) + "]"
 
         def compile(self):
+            return lambda x: x in self.vals()
+
+        def vals(self):
             sum_val = 0
             for value in self.u.vals():
+                if isinstance(value.value, str):
+                    return None
                 sum_val += value.value
 
-            return lambda: Atom(sum_val)
+            return {Atom(sum_val)}
+
 
 class Avg():
     def __init__(self,u):
@@ -358,13 +364,18 @@ class Avg():
         return "[AVG: " + str(self.u) + "]"
 
     def compile(self):
+        return lambda x: x in self.vals()
+
+    def vals(self):
         sum_val = 0
         count_val = 0
         for value in self.u.vals():
+            if isinstance(value.value, str):
+                return None
             sum_val += value.value
             count_val += 1
 
-        return lambda: Atom(sum_val/count_val)
+        return {Atom(sum_val/count_val)}
 
 
 class ArgMax():
