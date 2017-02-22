@@ -153,6 +153,98 @@ class Reverse():
         return -self.b.__hash__()
 
 
+class NonGenerator():
+    def __eq__(self, other):
+        return isinstance(other, NonGenerator)
+
+    def __hash__(self):
+        return "$$NG$$".__hash__()
+
+class GreaterThan():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[GT " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value > self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+class GreaterThanEq():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[GTE " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value >= self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+class LessThan():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[LT " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value < self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+class LessThanEq():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[LTE " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value <= self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+class Eq():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[EQ " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value == self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+class NEq():
+    def __init__(self, a):
+        self.a = a
+
+    def __str__(self):
+        return "[NEQ " + str(self.a) + "]"
+
+    def compile(self):
+        return lambda x: x.value != self.a.value
+
+    def vals(self):
+        return {NonGenerator()}
+
+
+
 class Join():
     def __init__(self, b, u):
         self.b = b
@@ -163,19 +255,23 @@ class Join():
         uc = self.u.compile()
         ys = self.u.vals()
 
+        if NonGenerator() in ys:
+            ys = [v.v for v in self.b.vals()]
+
         return lambda x: True in [uc(y) and bc(x, y) for y in ys]
 
     def vals(self):
         c = self.compile()
         ret = set()
-
         for x in self.b.vals():
             if c(x.k):
                 ret.add(x.k)
         return ret
 
     def __str__(self):
-        return("[JOIN: " + str(self.b) + " x " +str(self.u) + "]")
+        return ("[JOIN: " + str(self.b) + " x " + str(self.u) + "]")
+
+
 
 
 class Chain():
@@ -390,6 +486,30 @@ class Avg():
         return {Atom(sum_val/count_val)}
 
 
+class Add():
+    def __init__(self,u1,u2):
+        self.u1 = u1
+        self.u2 = u2
+
+    def __str__(self):
+        return "[ADD: " + str(self.u1) + "+" + str(self.u2) + "]"
+
+    def compile(self):
+        return lambda x: x in self.vals()
+
+    def vals(self):
+        u1vals = self.u1.vals()
+        u2vals = self.u2.vals()
+
+        ret = set()
+
+        if len(u1vals) == 1 and len(u2vals) == 1:
+            for u in u1vals:
+                for v in u2vals:
+                    ret.add(Atom(u.value+v.value))
+
+        return ret
+
 class ArgMax():
     def __init__(self, u, b):
         self.u = u
@@ -463,6 +583,7 @@ class ArgMin():
 if __name__ == "__main__":
     seattle = Entity("Seattle")
     nyc = Entity("New York")
+    nyc2 = Entity("New York2")
 
     john = Entity("John")
     mary = Entity("Mary")
@@ -473,7 +594,9 @@ if __name__ == "__main__":
     population.add(seattle, Atom(50000))
     population.add(nyc,     Atom(100000))
 
-    cities = Union(nyc,seattle)
+    population.add(nyc,     Atom(600000))
+    population.add(nyc2,     Atom(600000))
+    cities = Union(nyc2, Union(nyc,seattle))
 
     pob = Property("PlaceOfBirth")
     pob.add(john,seattle)
@@ -538,3 +661,9 @@ if __name__ == "__main__":
 
     print(Avg(Union(Atom(10),Atom(20))).vals())
     print(Sum(Union(Atom(10),Atom(20))).vals())
+
+
+    print([str(a) for a in Join(GreaterThan(Atom(15)), Union(Atom(10),Atom(20))).vals()])
+
+    print([str(a) for a in Join(Reverse(population),nyc).vals()])
+    print([str(a) for a in Add(Atom(10),Join(Reverse(population),nyc)).vals()])

@@ -95,7 +95,7 @@ for p in properties:
 u.add(records)
 
 
-def transition(u, b):
+def AAtransition(u, b):
     u_actions = [(act_union, cross_product(u, u)),
                  (act_intersection, cross_product(u, u)),
                  (act_agg, u)
