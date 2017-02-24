@@ -1,3 +1,6 @@
+from dcs.base.Pair import Pair
+
+
 class Chain():
     def __init__(self,a,b):
         self.a = a

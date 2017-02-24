@@ -1,13 +1,21 @@
-
-
-
-
-
-
-
-
-
-
+from dcs.aggregation.Avg import Avg
+from dcs.aggregation.Count import Count
+from dcs.aggregation.Max import Max
+from dcs.aggregation.Min import Min
+from dcs.aggregation.Sum import Sum
+from dcs.arithmetic.Add import Add
+from dcs.base.Atom import Atom
+from dcs.base.Entity import Entity
+from dcs.base.Property import Property
+from dcs.comparitor.GreaterThan import GreaterThan
+from dcs.relation.Chain import Chain
+from dcs.relation.Intersection import Intersection
+from dcs.relation.Join import Join
+from dcs.relation.Negate import Negate
+from dcs.relation.Reverse import Reverse
+from dcs.relation.Union import Union
+from dcs.superlative.ArgMax import ArgMax
+from dcs.superlative.ArgMin import ArgMin
 
 if __name__ == "__main__":
     seattle = Entity("Seattle")
@@ -92,7 +100,7 @@ if __name__ == "__main__":
     print(Sum(Union(Atom(10),Atom(20))).vals())
 
 
-    print([str(a) for a in Join(GreaterThan(Atom(15)), Union(Atom(10),Atom(20))).vals()])
+    print([str(a) for a in Join(population,GreaterThan(Atom(500000))).vals()])
 
     print([str(a) for a in Join(Reverse(population),nyc).vals()])
     print([str(a) for a in Add(Atom(10),Join(Reverse(population),nyc)).vals()])
