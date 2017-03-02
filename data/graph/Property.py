@@ -1,4 +1,4 @@
-from graph.Node import Node
+from data.graph import Node
 
 
 class GProperty(Node):

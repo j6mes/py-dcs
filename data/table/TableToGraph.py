@@ -1,8 +1,6 @@
-import csv
-
-from graph.Node import Node
-from graph.Property import GProperty
-from table.Table import Table
+from data.graph.Node import Node
+from data.graph.Property import GProperty
+from data.table.Table import Table
 
 
 def ttg(table):

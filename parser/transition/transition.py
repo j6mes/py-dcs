@@ -1,11 +1,10 @@
-from parser.TokenSpan import TokenSpan
-from training import *
-from dcs.dcs import *
-from table.TableToGraph import *
-from dateutil.parser import parse as dparse
 import unicodedata
-import itertools
-from transition.rules import *
+
+from dateutil.parser import parse as dparse
+from dcs.dcs import *
+
+from training import *
+
 t = TrainingExample("Greece last held its Summer Olympics in 2005?", None, None)
 
 
