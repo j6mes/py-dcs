@@ -11,7 +11,7 @@ def is_date(string):
         if hasattr(res, "month") and res.month is not None:
             components+=1
         if hasattr(res, "year") and res.year is not None:
-            components +=1
+            return True
 
         return components>=2
     except ValueError:
