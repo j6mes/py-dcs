@@ -7,13 +7,16 @@ from dcs.base.Unary import Unary
 from util.dateutils import is_date
 from util.numberutils import is_number
 
+
 def ground_entity(ts):
     s = " ".join(ts.tokens)
     return [Entity(s)]
 
+
 def ground_atom(ts):
     s = " ".join(ts.tokens)
-    return [Atom(s)]
+    return NormalisationAtom(s).allatoms()
+
 
 
 def get_table_properties(table):
@@ -71,3 +74,17 @@ def get_table_properties(table):
     u.add(records)
 
     return u, b
+
+
+def get_question_properties(ex):
+    actions = [(ground_entity, ex.nes),
+               (ground_atom, ex.nums),
+               ]
+
+    u = set()
+
+    for action, data in actions:
+        for datum in data:
+            u.update(action(datum))
+
+    return u, NormalisationAtom.allprops()
