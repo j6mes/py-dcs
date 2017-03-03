@@ -14,7 +14,8 @@ class NormalisationAtom():
         if is_date(value):
             self.da = DateAtom(value)
             self.dateprops.add(self, self.da)
-        elif is_number(value):
+
+        if is_number(value):
             self.na = Atom(float(value))
             self.numberprops.add(self, self.na)
 
@@ -37,3 +38,16 @@ class NormalisationAtom():
         return ret
 
     allprops = staticmethod(allprops)
+
+    def vals(self):
+        return {self}
+
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return False
+
+    def __hash__(self):
+        return self.value.__hash__()
+

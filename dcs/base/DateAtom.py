@@ -44,3 +44,16 @@ class DateAtom():
         return ret
 
     allprops = staticmethod(allprops)
+
+    def vals(self):
+        return {self}
+
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.value == self.value
+        return False
+
+    def __hash__(self):
+        return self.value.__hash__()
+

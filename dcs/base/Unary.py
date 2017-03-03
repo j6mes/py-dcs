@@ -28,3 +28,5 @@ class Unary():
         if isinstance(other, self.__class__):
             return other.name == self.name
         return False
+
+    
