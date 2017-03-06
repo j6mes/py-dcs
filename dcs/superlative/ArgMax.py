@@ -1,4 +1,7 @@
-class ArgMax():
+from dcs.TypeInfo import TypeInfo
+
+
+class ArgMax(TypeInfo):
     def __init__(self, u, b):
         self.u = u
         self.b = b

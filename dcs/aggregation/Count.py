@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.base.Atom import Atom
 
 
-class Count():
+class Count(TypeInfo):
     def __init__(self,u):
         self.u = u
 

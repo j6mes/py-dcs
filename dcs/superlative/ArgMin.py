@@ -1,4 +1,7 @@
-class ArgMin():
+from dcs.TypeInfo import TypeInfo
+
+
+class ArgMin(TypeInfo):
     def __init__(self, u, b):
         self.u = u
         self.b = b
@@ -31,3 +34,5 @@ class ArgMin():
             return best_v
 
         return None
+
+

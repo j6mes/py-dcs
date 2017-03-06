@@ -1,4 +1,7 @@
-class Union():
+from dcs.TypeInfo import TypeInfo
+
+
+class Union(TypeInfo):
     def __init__(self,u1,u2):
         self.u1 = u1
         self.u2 = u2

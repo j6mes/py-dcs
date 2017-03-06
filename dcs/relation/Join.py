@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.relation.support.NonGenerator import NonGenerator
 
 
-class Join():
+class Join(TypeInfo):
     def __init__(self, b, u):
         self.b = b
         self.u = u
@@ -26,4 +27,7 @@ class Join():
 
     def __str__(self):
         return ("[JOIN: " + str(self.b) + " x " + str(self.u) + "]")
+
+
+
 

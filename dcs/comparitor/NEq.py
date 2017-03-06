@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.relation.support.NonGenerator import NonGenerator
 
 
-class NEq():
+class NEq(TypeInfo):
     def __init__(self, a):
         self.a = a
 

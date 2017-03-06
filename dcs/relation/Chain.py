@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo, ChainableType
 from dcs.base.Pair import Pair
 
 
-class Chain():
+class Chain(ChainableType):
     def __init__(self,a,b):
         self.a = a
         self.b = b
@@ -27,3 +28,11 @@ class Chain():
 
     def __str__(self):
         return "[CHAIN: "+str(self.a) +" x "+str(self.b)+"]"
+
+    def __hash__(self):
+        return "$CHAIN$".__hash__() + self.a.__hash__() + self.b.__hash__()
+
+    def __eq__(self, other):
+        if isinstance(other, self.__class__):
+            return other.a == self.a and other.b == self.b
+        return False

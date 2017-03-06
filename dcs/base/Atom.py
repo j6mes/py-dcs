@@ -1,8 +1,12 @@
-class Atom():
+from dcs.base.ComparableAtom import ComparableAtom
+
+
+class Atom(ComparableAtom):
     def __init__(self, v):
         if isinstance(v,Atom):
             v = v.value
-        self.value = v
+
+        self.value = float(v)
 
     def vals(self):
         return {self}

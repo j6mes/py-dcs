@@ -1,4 +1,7 @@
-class Unary():
+from dcs.TypeInfo import TypeInfo
+
+
+class Unary(TypeInfo):
     def __init__(self,name):
         self.name = name
         self.values = set()
@@ -28,5 +31,3 @@ class Unary():
         if isinstance(other, self.__class__):
             return other.name == self.name
         return False
-
-    

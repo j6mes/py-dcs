@@ -1,4 +1,7 @@
-class Pair():
+from dcs.TypeInfo import TypeInfo
+
+
+class Pair(TypeInfo):
     def __init__(self,k,v):
         self.k = k
         self.v = v

@@ -1,3 +1,4 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.base.Atom import Atom
 from dcs.base.DateAtom import DateAtom
 from dcs.base.Property import Property
@@ -5,7 +6,7 @@ from util.dateutils import is_date
 from util.numberutils import is_number
 
 
-class NormalisationAtom():
+class NormalisationAtom(TypeInfo):
     dateprops = Property("$date")
     numberprops = Property("$number")
 
@@ -51,3 +52,5 @@ class NormalisationAtom():
     def __hash__(self):
         return self.value.__hash__()
 
+    def compile(self):
+        return lambda x: x in self.vals()

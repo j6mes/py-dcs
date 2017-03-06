@@ -35,6 +35,10 @@ if __name__ == "__main__":
     population.add(nyc2,     Atom(600000))
     cities = Union(nyc2, Union(nyc,seattle))
 
+
+    people = Union(Union(sue,john), Union(mary,bob))
+
+
     pob = Property("PlaceOfBirth")
     pob.add(john,seattle)
     pob.add(mary,nyc)
@@ -104,3 +108,14 @@ if __name__ == "__main__":
 
     print([str(a) for a in Join(Reverse(population),nyc).vals()])
     print([str(a) for a in Add(Atom(10),Join(Reverse(population),nyc)).vals()])
+
+    print(population.compatible(cities))
+    print(pob.compatible(people))
+    print(childrenOf.chain(pob))
+
+    print(pob.chain(population))
+    print(population.chain(pob))
+
+
+    print([str(v.v) for v in Reverse(population).vals()])
+    print([str(v.v) for v in population.vals()])

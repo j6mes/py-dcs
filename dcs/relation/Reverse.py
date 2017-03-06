@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo, ChainableType
 from dcs.base.Pair import Pair
 
 
-class Reverse():
+class Reverse(ChainableType):
     def __init__(self, b):
         self.b = b
 
@@ -10,7 +11,6 @@ class Reverse():
 
     def vals(self):
         ret = set()
-        c = self.b.compile()
 
         for p in self.b.vals():
             ret.add(Pair(p.v, p.k))

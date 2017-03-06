@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.extra.EntityContainer import EntityContainer
 
 
-class Negate():
+class Negate(TypeInfo):
     def __init__(self, u):
         self.u = u
 

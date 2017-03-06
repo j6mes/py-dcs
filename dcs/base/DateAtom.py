@@ -1,9 +1,13 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.base.Atom import Atom
+from dcs.base.ComparableAtom import ComparableAtom
 from dcs.base.Property import Property
-from dateutil.parser import parser, parse
+from dateutil.parser import parser
 
 _parser_p = parser()
-class DateAtom():
+
+
+class DateAtom(ComparableAtom):
     yearprops = Property("$date$year")
     monthprops = Property("$date$month")
     dayprops = Property("$date$day")
@@ -15,17 +19,17 @@ class DateAtom():
         res, _ = _parser_p._parse(value)
         if hasattr(res, "day") and res.day is not None:
             self.day = res.day
-            a = Atom(res.day)
+            a = Atom(float(res.day))
             self.atoms.add(a)
-            self.dayprops.add(self,a)
+            self.dayprops.add(self, a)
         if hasattr(res, "month") and res.month is not None:
             self.month = res.month
-            a = Atom(res.month)
+            a = Atom(float(res.month))
             self.atoms.add(a)
             self.monthprops.add(self, a)
         if hasattr(res, "year") and res.year is not None:
             self.year = res.year
-            a = Atom(res.year)
+            a = Atom(float(res.year))
             self.atoms.add(a)
             self.yearprops.add(self, a)
 
@@ -48,7 +52,6 @@ class DateAtom():
     def vals(self):
         return {self}
 
-
     def __eq__(self, other):
         if isinstance(other, self.__class__):
             return other.value == self.value
@@ -56,4 +59,7 @@ class DateAtom():
 
     def __hash__(self):
         return self.value.__hash__()
+
+    def compile(self):
+        return lambda x: x in self.vals()
 

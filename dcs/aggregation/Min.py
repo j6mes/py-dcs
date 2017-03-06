@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.base.Atom import Atom
 
 
-class Min():
+class Min(TypeInfo):
     def __init__(self,u):
         self.u = u
 

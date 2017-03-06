@@ -1,7 +1,8 @@
+from dcs.TypeInfo import TypeInfo
 from dcs.extra.EntityContainer import EntityContainer
 
 
-class Record():
+class Record(TypeInfo):
     def __init__(self, value):
         self.value = value
         EntityContainer.add(self)
